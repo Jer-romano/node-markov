@@ -1,35 +1,14 @@
 /** Textual markov chain generator */
-const fs = require('fs');
-
-
 class MarkovMachine {
 
   /** build markov machine; read in text.*/
 
   constructor(text) {
-      
-      if (text.charAt(0) == ".") {
-        fs.readFile(text, "utf8", (err, data) => {
-          if(err) {
-              console.log("Error reading", text, "\n", err);
-              process.exit(1);
-          }
-          else {
-            this.words = data.split(/[ \r\n]+/);
-            this.setUp();
-          }
-        })
-      }
-      else {
-        this.words = text.split(/[ \r\n]+/);
-        this.setUp();
-      }
-  }
-
-  setUp() {
-    this.words = this.words.filter(c => c !== "");
+    let words = text.split(/[ \r\n]+/);
+    this.words = words.filter(c => c !== "");
     this.numberOfWords = this.words.length;
     this.makeChains();
+      
   }
 
   /** set markov chains:
@@ -51,6 +30,7 @@ class MarkovMachine {
       }
   
       this.chains = chains;
+ }
       // let chains = {};
       // for(let word of this.words) {
       //   if(chains[word] == undefined) {
@@ -61,12 +41,10 @@ class MarkovMachine {
       // for(let i = 1; i < this.words.length; i++) {
       //   chains[this.words[i-1]].push(this.words[i]);
       // }
-      // let numWords = this.words.length;
       // chains[this.words[numWords-1]].push(null); // add null to last word in text
       
       // return chains;
-  }
-
+  //}
 
   static chooseRandom(choices) {
     let index = Math.floor(Math.random() * choices.length);
@@ -79,9 +57,11 @@ class MarkovMachine {
     let text = [];
     let startingWord = MarkovMachine.chooseRandom(this.words);
     text.push(startingWord);
+   // console.log("HHHH")
 
     for(let i = 1; i < numWords; i++) {
-      let choices = this.chains[text[i-1]];
+      let choices = this.chains.get(text[i-1]);
+     //console.log(choices);
       let nextWord = MarkovMachine.chooseRandom(choices);
       if(nextWord == null) {
         text.push(".");

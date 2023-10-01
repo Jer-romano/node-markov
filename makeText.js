@@ -1,5 +1,6 @@
 /** Command-line tool to generate Markov text. */
 
+const fs = require('fs');
 const axios = require('axios');
 const MarkovMachine = require('./markov');
 //const MarkovMachine = markov.MarkovMachine;
@@ -13,21 +14,18 @@ function generateText(text) {
 }
 
 async function getURLText(url) {
+    let resp;
     try {
-        let resp = await axios.get(url);
-        console.log(resp.status)
-        console.log(resp.headers)
-        console.log(typeof(resp.data))
-        return resp.data;
+        resp = await axios.get(url);
+        generateText(resp.data);
     } catch(err) {
         console.error("GetURLText function failed:", err);
         process.exit(1);
     }
-    
 }
 
 function getFileText(path) {
-    fs.readFile(text, "utf8", (err, data) => {
+    fs.readFile(path, "utf8", (err, data) => {
         if(err) {
             console.log("Error reading", text, "\n", err);
             process.exit(1);
@@ -40,19 +38,10 @@ function getFileText(path) {
 
 if(flag == "file") {
     let file = process.argv[3];
-    let mm = new MarkovMachine("./" + file, () => {
-        console.log(`...generated text from file ${file}...`);
-        //console.log(mm.numberOfWords);
-        console.log(mm.makeText());
-    });
+    getFileText(file);
 }
 else {
     let url = process.argv[3];
    // console.log(url);
     let response = getURLText(url);
-    //console.log("Response type:", typeof(response))
-    //console.log(response);
- 
-
-    
 }
